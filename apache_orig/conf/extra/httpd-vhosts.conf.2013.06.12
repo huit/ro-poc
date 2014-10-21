@@ -1,0 +1,186 @@
+#
+# Virtual Hosts
+#
+# If you want to maintain multiple domains/hostnames on your
+# machine you can setup VirtualHost containers for them. Most configurations
+# use only name-based virtual hosts so the server doesn't need to worry about
+# IP addresses. This is indicated by the asterisks in the directives below.
+#
+# Please see the documentation at 
+# <URL:http://httpd.apache.org/docs/2.2/vhosts/>
+# for further details before you try to setup virtual hosts.
+#
+# You may use the command line option '-S' to verify your virtual host
+# configuration.
+
+#
+# Use name-based virtual hosting.
+#
+NameVirtualHost *:80
+
+#
+# VirtualHost example:
+# Almost any Apache directive may go into a VirtualHost container.
+# The first VirtualHost section is used for all requests that do not
+# match a ServerName or ServerAlias in any <VirtualHost> block.
+#
+#<VirtualHost *:80>
+#    ServerAdmin webmaster@dummy-host.example.com
+#    DocumentRoot "/usr/local/apache2/docs/dummy-host.example.com"
+#    ServerName dummy-host.example.com
+#    ServerAlias www.dummy-host.example.com
+#    ErrorLog "logs/dummy-host.example.com-error_log"
+#    CustomLog "logs/dummy-host.example.com-access_log" common
+#</VirtualHost>
+
+#<VirtualHost *:80>
+#    ServerAdmin webmaster@dummy-host2.example.com
+#    DocumentRoot "/usr/local/apache2/docs/dummy-host2.example.com"
+#    ServerName dummy-host2.example.com
+#    ErrorLog "logs/dummy-host2.example.com-error_log"
+#    CustomLog "logs/dummy-host2.example.com-access_log" common
+#</VirtualHost>
+
+<VirtualHost *:80>
+    ServerAdmin sysops@fas.harvard.edu
+    DocumentRoot "/usr/local/apache2/htdocs/insecure"
+    ServerName test.registrar.fas.harvard.edu
+    RewriteEngine On
+    RewriteCond %{SERVER_NAME} ^test.registrar.fas.harvard.edu
+    RewriteRule   ^/$  /fasro/  [R]
+    RewriteCond %{SERVER_PORT} !=80$
+    JkMount /fasro worker2
+    JkMount /fasro/* worker2
+</VirtualHost>
+
+<VirtualHost *:80>
+    ServerAdmin sysops@fas.harvard.edu
+    DocumentRoot "/usr/local/apache2/htdocs/insecure"
+    ServerName testapps.registrar.fas.harvard.edu
+    RewriteEngine on
+    ReWriteCond %{SERVER_PORT} !^443$
+    RewriteRule ^/(.*) https://%{HTTP_HOST}/$1 [NC,R,L]
+    Redirect permanent /secure https://testapps.registrar.fas.harvard.edu
+
+# Send everything for context /examples and /docs to worker named worker1 (ajp13)
+
+# Tomcat Instance 1 (Tomcat 7.x)
+    JkMount /enrollment worker1
+    JkMount /enrollment/* worker1
+    JkMount /enrollment/services worker1
+    JkMount /enrollment/services/* worker1
+    JkMount /register worker1
+    JkMount /register/* worker1
+    JkMount /register/services worker1
+    JkMount /register/services/* worker1
+
+# Tomcat Instance 2 (Tomact 6.x)
+    JkMount /fasro worker2
+    JkMount /fasro/* worker2
+    JkMount /harvardQ worker2
+    JkMount /harvardQ/* worker2
+    JkMount /ordertranscripts worker2
+    JkMount /ordertranscripts/* worker2
+    JkMount /redirect worker2
+    JkMount /redirect/* worker2
+    JkMount /roadmin worker2
+    JkMount /roadmin/* worker2
+    JkMount /studyabroad worker2
+    JkMount /studyabroad/* worker2
+
+# Tomcat Instance 3 (Tomcat 5.x)
+    JkMount /saportal worker3
+    JkMount /saportal/* worker3
+
+# Tomcat Instance 4 (Tomcat 7.x)
+    JkMount /anp worker4
+    JkMount /anp/* worker4
+    JkMount /onlinesrec worker4
+    JkMount /onlinesrec/* worker4
+    JkMount /rptportal worker4
+    JkMount /rptportal/* worker4
+
+# Tomcat Instance 5 (Tomcat 7.x)
+    JkMount /gradeoptionchange worker5
+    JkMount /gradeoptionchange/* worker5
+    JkMount /ogpadmin worker5
+    JkMount /ogpadmin/* worker5
+    JkMount /onlinegrading worker5
+    JkMount /onlinegrading/* worker5
+
+# Tomcat Instance 6 (Tomcat 7.x)
+    JkMount /coursemanager worker6
+    JkMount /coursemanager/* worker6
+    JkMount /oosExamNotifications worker6
+    JkMount /oosExamNotifications/* worker6
+    JkMount /secondary worker6
+    JkMount /secondary/* worker6
+    JkMount /roportal worker6
+    JkMount /roportal/* worker6
+
+# Tomcat Instance 7 (Tomcat 7.x)
+    JkMount /CourseRegistration worker7
+    JkMount /CourseRegistration/* worker7
+
+# Tomcat Instance 8 (Tomcat 7.x)
+    JkMount /degreeapp worker8
+    JkMount /degreeapp/* worker8
+    JkMount /formadmin worker8
+    JkMount /formadmin/* worker8
+    JkMount /graddegree worker8
+    JkMount /graddegree/* worker8
+
+# Tomcat Instance 9 (Tomcat 7.x)
+    JkMount /transcripts worker9
+    JkMount /transcripts/* worker9
+    JkMount /avcas worker9
+    JkMount /avcas/* worker9
+    JkMount /oper worker9
+    JkMount /oper/* worker9
+
+# Tomcat Instance 10 (Tomcat 7.x)
+    JkMount /ptpws worker10
+    JkMount /ptpws/* worker10
+    JkMount /tfalloc worker10
+    JkMount /tfalloc/* worker10
+    JkMount /wbportal worker10
+    JkMount /wbportal/* worker10
+
+# Tomcat Instance 11 (Tomcat 7.x)
+    JkMount /dmportal worker11
+    JkMount /dmportal/* worker11
+    JkMount /holds worker11
+    JkMount /holds/* worker11 
+    JkMount /survey worker11
+    JkMount /survey/* worker11
+
+# Tomcat Instance 12 (Tomcat 7.x)
+    JkMount /hers2-account worker12
+    JkMount /hers2-account/* worker12
+    JkMount /registrarportal worker12
+    JkMount /registrarportal/* worker12
+
+</VirtualHost>
+
+<VirtualHost *:80>
+    ServerName testq.fas.harvard.edu
+    DocumentRoot /usr/local/apache2/htdocs/insecure/cue/
+    RewriteEngine On
+    RewriteCond %{SERVER_NAME} ^testq.fas.harvard.edu
+    RewriteRule   ^/$  /harvardQ/  [R]
+
+    #
+    # Mod_jk settings
+    #
+
+    <IfModule mod_jk.c>
+
+        JkMount /harvardQ worker2
+        JkMount /harvardQ/* worker2
+
+    </IfModule>
+
+    # End of mod_jk setting
+
+</VirtualHost>
+
