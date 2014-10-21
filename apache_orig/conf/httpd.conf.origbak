@@ -68,9 +68,9 @@ LoadModule auth_cas_module modules/mod_auth_cas.so
     CASVersion 2
     CASTimeout 7200
  
-    <Location /wbportal>
+    <Location /degree>
         AuthType CAS
-        CASScope /wbportal
+        CASScope /degree
         require valid-user
         CASAuthNHeader HU-PIN-USER-ID
         CASScrubRequestHeaders On
